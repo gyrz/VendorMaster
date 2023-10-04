@@ -10,6 +10,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csproj", "{403159F3-1A15-4501-A918-743B1A23B331}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VendorMaster", "WebApp\VendorMaster.csproj", "{26BEABF6-5516-422F-A8D9-09CCD349CADD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0CBDEBD4-4C72-44C8-82E9-CE7165A6081C} = {0CBDEBD4-4C72-44C8-82E9-CE7165A6081C}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contracts", "..\Contracts\Contracts.csproj", "{0CBDEBD4-4C72-44C8-82E9-CE7165A6081C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +38,10 @@ Global
 		{26BEABF6-5516-422F-A8D9-09CCD349CADD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26BEABF6-5516-422F-A8D9-09CCD349CADD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26BEABF6-5516-422F-A8D9-09CCD349CADD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CBDEBD4-4C72-44C8-82E9-CE7165A6081C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CBDEBD4-4C72-44C8-82E9-CE7165A6081C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CBDEBD4-4C72-44C8-82E9-CE7165A6081C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CBDEBD4-4C72-44C8-82E9-CE7165A6081C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
