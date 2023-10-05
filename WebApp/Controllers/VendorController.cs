@@ -18,6 +18,7 @@ using Contracts.Dto.BankAccount;
 using Contracts.Dto.Person;
 using Contracts.Dto.Email;
 using VendorMaster.Handlers.VendorHandler;
+using VendorMaster.Controllers.TemplateControllers;
 
 namespace VendorMaster.Controllers
 {
@@ -26,9 +27,8 @@ namespace VendorMaster.Controllers
     [Authorize]
     [RoleAuth(UserPermission.MGR)]
     [ModuleAuth(ModulePermission.VENDORMASTER)]
-    public class VendorController : Controller
+    public class VendorController : VendorMasterController<VendorDto, VendorDto>
     {
-        private readonly IVendorService vendorService;
         private readonly IAddressService addressService;
         private readonly IPhoneService phoneService;
         private readonly IEmailService emailService;
@@ -43,9 +43,8 @@ namespace VendorMaster.Controllers
             IPersonService personService,
             IEmailService emailService,
             IBankAccountService bankAccountService,
-            IPhoneService phoneService)
+            IPhoneService phoneService) : base(vendorService, redisCache)
         {
-            this.vendorService = vendorService;
             this.redisCache = redisCache;
             this.addressService = addressService;
             this.personService = personService;
@@ -56,10 +55,10 @@ namespace VendorMaster.Controllers
 
         [HttpPost("")]
         [HasWritePermissionForModule(ModulePermission.VENDORMASTER)]
-        public async Task<IActionResult> AddOrUpdate(VendorDto vendorDto)
+        public override async Task<IActionResult> AddOrUpdate(VendorDto vendorDto)
         {
             // Add or update vendor first
-            var res = await vendorService.AddOrUpdate(vendorDto);
+            var res = await service.AddOrUpdate(vendorDto);
             if (res.ResultCode == 400)
                 return BadRequest(res);
 
@@ -81,47 +80,7 @@ namespace VendorMaster.Controllers
 
             res.Message = await vendorHandleIterator.Start();
 
-            redisCache.Get<VendorDto>(typeof(VendorDto).ToString(), res.Data, async () => await vendorService.Get(res.Data));
-
-            return Ok(res);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
-        {
-            var res = await redisCache.Get<VendorDto>(typeof(VendorDto).ToString(), id, async () => await vendorService.Get(id));
-            if(res.ResultCode == 400)
-                return BadRequest(res);
-
-            if (res.ResultCode == 404)
-                return NotFound(res);
-
-            return Ok(res);
-        }
-
-        [HttpGet("list")]
-        public async Task<IActionResult> GetList()
-        {
-            var res = await redisCache.GetListUntracked<VendorDto>(typeof(VendorDto).ToString(), async (int[] idArr) => await vendorService.GetList(idArr));
-            if (res.ResultCode == 400)
-                return BadRequest(res);
-
-            if (res.ResultCode == 404)
-                return NotFound(res);
-
-            return Ok(res);
-        }
-
-        [HttpDelete("{id}")]
-        [HasWritePermissionForModule(ModulePermission.VENDORMASTER)]
-        public async Task<IActionResult> Remove(int id)
-        {
-            var res = await redisCache.Remove<VendorDto>(typeof(VendorDto).ToString(), id, async () => await vendorService.Remove(id));
-            if (res.ResultCode == 400)
-                return BadRequest(res);
-
-            if (res.ResultCode == 404)
-                return NotFound(res);
+            redisCache.Get<VendorDto>(typeof(VendorDto).ToString(), res.Data, async () => await service.Get(res.Data));
 
             return Ok(res);
         }
