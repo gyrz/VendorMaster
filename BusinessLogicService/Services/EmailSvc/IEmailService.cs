@@ -2,7 +2,7 @@
 
 namespace BusinessLogicService.Services.EmailSvc
 {
-    public interface IEmailService : IBase<EmailDto, EmailDto>
+    public interface IEmailService : IBaseService<EmailDto, EmailDto>
     {
     }
 }

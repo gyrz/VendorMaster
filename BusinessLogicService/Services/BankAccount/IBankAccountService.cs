@@ -2,7 +2,7 @@
 
 namespace BusinessLogicService.Services.BankAccountSvc
 {
-    public interface IBankAccountService : IBase<BankAccountDto, BankAccountDto>
+    public interface IBankAccountService : IBaseService<BankAccountDto, BankAccountDto>
     {
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicService.Services
 {
-    public interface IBase<T, T2>
+    public interface IBaseService<T, T2>
     {
         Task<Result<int>> AddOrUpdate(T city);
         Task<Result<bool>> Remove(int id);

@@ -2,7 +2,7 @@
 
 namespace BusinessLogicService.Services.PersonSvc
 {
-    public interface IPersonService : IBase<PersonSimpleDto, PersonDto>
+    public interface IPersonService : IBaseService<PersonSimpleDto, PersonDto>
     {
     }
 }

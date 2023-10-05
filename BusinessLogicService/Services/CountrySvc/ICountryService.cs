@@ -2,7 +2,7 @@
 
 namespace BusinessLogicService.Services.CountrySvc
 {
-    public interface ICountryService : IBase<CountryDto, CountryDto>
+    public interface ICountryService : IBaseService<CountryDto, CountryDto>
     {
     }
 }

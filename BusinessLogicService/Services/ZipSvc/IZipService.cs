@@ -9,7 +9,7 @@ using Contracts.Dto.Vendor;
 
 namespace BusinessLogicService.Services.ZipSvc
 {
-    public interface IZipService : IBase<ZipSimpleDto, ZipDto>
+    public interface IZipService : IBaseService<ZipSimpleDto, ZipDto>
     {
     }
 }

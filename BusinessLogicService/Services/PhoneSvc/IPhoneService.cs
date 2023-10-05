@@ -2,7 +2,7 @@
 
 namespace BusinessLogicService.Services.PhoneSvc
 {
-    public interface IPhoneService : IBase<PhoneDto, PhoneDto>
+    public interface IPhoneService : IBaseService<PhoneDto, PhoneDto>
     {
     }
 }

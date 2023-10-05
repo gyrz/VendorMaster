@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicService.Services.VendorSvc
 {
-    public interface IVendorService : IBase<VendorDto, VendorDto>
+    public interface IVendorService : IBaseService<VendorDto, VendorDto>
     {
     }
 }

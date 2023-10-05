@@ -8,9 +8,9 @@ namespace VendorMaster.Controllers.TemplateControllers
 {
     public class BaseController<T, T2> : Controller
     {
-        protected readonly IBase<T, T2> service;
+        protected readonly IBaseService<T, T2> service;
         protected readonly IRedisCache redisCache;
-        public BaseController(IBase<T, T2> service, IRedisCache redisCache)
+        public BaseController(IBaseService<T, T2> service, IRedisCache redisCache)
         {
             this.service = service;
             this.redisCache = redisCache;

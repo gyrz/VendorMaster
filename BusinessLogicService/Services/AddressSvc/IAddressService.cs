@@ -2,7 +2,7 @@
 
 namespace BusinessLogicService.Services.AddressSvc
 {
-    public interface IAddressService : IBase<AddressSimpleDto, AddressDto>
+    public interface IAddressService : IBaseService<AddressSimpleDto, AddressDto>
     {
     }
 }

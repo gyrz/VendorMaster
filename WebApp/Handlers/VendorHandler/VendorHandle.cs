@@ -12,13 +12,13 @@ namespace VendorMaster.Handlers.VendorHandler
     {
         private readonly int id;
         private readonly IEnumerable<T> dtos;
-        private readonly IBase<T, T2> srv;
+        private readonly IBaseService<T, T2> srv;
         private readonly IRedisCache redisCache;
 
         public VendorHandle(
             int id,
             IEnumerable<T> dtos,
-            IBase<T, T2> srv,
+            IBaseService<T, T2> srv,
             IRedisCache redisCache)
         {
             this.id = id;
