@@ -37,9 +37,9 @@ namespace VendorMaster.Controllers
             if (res.ResultCode == 404)
                 return NotFound(res);
 
-            var resGet = await redisCache.Get<ZipDto>(typeof(ZipDto).ToString(), res.Data, async () => await zipService.Get(res.Data));
+            redisCache.Get<ZipDto>(typeof(ZipDto).ToString(), res.Data, async () => await zipService.Get(res.Data));
 
-            return Ok(resGet);
+            return Ok(res);
         }
 
         [HttpGet("{id}")]

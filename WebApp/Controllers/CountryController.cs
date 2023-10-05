@@ -37,9 +37,9 @@ namespace VendorMaster.Controllers
             if (res.ResultCode == 404)
                 return NotFound(res);
 
-            var resGet = await redisCache.Get<CountryDto>(typeof(CountryDto).ToString(), res.Data, async () => await countryService.Get(res.Data));
+            redisCache.Get<CountryDto>(typeof(CountryDto).ToString(), res.Data, async () => await countryService.Get(res.Data));
 
-            return Ok(resGet);
+            return Ok(res);
         }
 
         [HttpGet("{id}")]

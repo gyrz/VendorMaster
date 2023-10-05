@@ -36,9 +36,9 @@ namespace VendorMaster.Controllers
             if (res.ResultCode == 404)
                 return NotFound(res);
 
-            var resGet = await redisCache.Get<CityDto>(typeof(CityDto).ToString(), res.Data, async () => await cityService.Get(res.Data));
+            redisCache.Get<CityDto>(typeof(CityDto).ToString(), res.Data, async () => await cityService.Get(res.Data));
 
-            return Ok(resGet);
+            return Ok(res);
         }
 
         [HttpGet("{id}")]
