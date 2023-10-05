@@ -25,6 +25,41 @@ namespace DataAccess.Data
         public DbSet<Phone> Phones { get; set; }
         public DbSet<Zip> ZipCodes { get; set; }
 
+        public override int SaveChanges()
+        {
+            UpdateTimestamps();
+            return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            UpdateTimestamps();
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void UpdateTimestamps()
+        {
+            var currentTime = DateTime.UtcNow;
+
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                if (entry.Entity is BaseEntity baseEntity)
+                {
+                    switch (entry.State)
+                    {
+                        case EntityState.Added:
+                            baseEntity.CreatedAt = currentTime;
+                            baseEntity.LastModifiedAt = currentTime;
+                            break;
+                        case EntityState.Modified:
+                            entry.Property("CreatedAt").IsModified = false; // Ne módosítsuk a CreatedAt tulajdonságot
+                            baseEntity.LastModifiedAt = currentTime;
+                            break;
+                    }
+                }
+            }
+        }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

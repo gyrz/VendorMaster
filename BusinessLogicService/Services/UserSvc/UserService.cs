@@ -1,10 +1,11 @@
-﻿using BusinessLogicService.User.UserTemplate;
+﻿using BusinessLogicService.Services.UserSvc.UserTemplate;
 using Contracts;
 using Contracts.Dto.Enums;
 using Contracts.Dto.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,7 +15,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicService.User
+namespace BusinessLogicService.Services.UserSvc
 {
     public class UserService : IUserService
     {
@@ -33,7 +34,7 @@ namespace BusinessLogicService.User
             {
                 new Claim(ClaimTypes.NameIdentifier, user.UserName),
                 new Claim(ClaimTypes.Role, user.UserPermission.ToString()),
-                new Claim("ModulePermissions", string.Join(';', user.ModulePermissions)),
+                new Claim("ModulePermissions", JsonConvert.SerializeObject(user.ModulePermissions)),
             };
 
             var token = new JwtSecurityToken(
@@ -49,13 +50,13 @@ namespace BusinessLogicService.User
 
         public async Task<Result<string>> LoginAsync(string user, string pass)
         {
-            User.UserTemplate.UserTemplate ut = null;
-            if(user == "admin" && pass == "admin")
+            UserSvc.UserTemplate.UserTemplate ut = null;
+            if (user == "admin" && pass == "admin")
                 ut = new AdminUser();
-            else if(user == "user" && pass == "user")
+            else if (user == "user" && pass == "user")
                 ut = new BaseUser();
             else
-                return new Result<string>() { ResultCode = (int)HttpStatusCode.BadRequest, Message = "User not found"};
+                return new Result<string>() { ResultCode = (int)HttpStatusCode.BadRequest, Message = "User not found" };
 
             var res = await GenerateTokenAsync(ut.UserDto);
             return new Result<string>() { Data = res };

@@ -4,18 +4,18 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Collections;
 using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json;
 using Contracts.Dto.User;
+using Newtonsoft.Json;
 
 namespace VendorMaster.Extensions
 {
-    public class ModuleAuthAttribute : AuthorizeAttribute, IAuthorizationFilter
+    public class HasWritePermissionForModuleAttribute : AuthorizeAttribute, IAuthorizationFilter
     {
-        readonly ModulePermission[] _requiredClaims;
+        readonly ModulePermission _requiredClaim;
 
-        public ModuleAuthAttribute(params ModulePermission[] claims)
+        public HasWritePermissionForModuleAttribute(ModulePermission claim)
         {
-            _requiredClaims = claims;
+            _requiredClaim = claim;
         }
 
         public void OnAuthorization(AuthorizationFilterContext context)
@@ -35,9 +35,8 @@ namespace VendorMaster.Extensions
             }
 
             var ownedClaims = JsonConvert.DeserializeObject<List<ModulePermissionContainer>>(claim.Value);
-            var ownedPermissions = ownedClaims.Select(x => x.ModulePermission).ToList();
-
-            if (_requiredClaims.Where(x => !ownedPermissions.Contains(x)).Count() != 0)
+            var needed = ownedClaims.FirstOrDefault(x => x.ModulePermission == _requiredClaim);
+            if (needed == null || needed.Write == false)
             {
                 context.Result = new ForbidResult();
             }

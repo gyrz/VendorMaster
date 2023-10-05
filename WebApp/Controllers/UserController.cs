@@ -1,4 +1,4 @@
-﻿using BusinessLogicService.User;
+﻿using BusinessLogicService.Services.UserSvc;
 using Contracts.Dto.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +18,6 @@ namespace VendorMaster.Controllers
         }
 
         [HttpPost("login")]
-
         public async Task<IActionResult> Login(string user, string pass)
         {
             var res = await userService.LoginAsync(user, pass);

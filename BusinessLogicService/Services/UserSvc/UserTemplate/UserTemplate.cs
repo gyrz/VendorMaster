@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicService.User.UserTemplate
+namespace BusinessLogicService.Services.UserSvc.UserTemplate
 {
     public class UserTemplate
     {

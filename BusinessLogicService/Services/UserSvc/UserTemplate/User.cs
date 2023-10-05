@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicService.User.UserTemplate
+namespace BusinessLogicService.Services.UserSvc.UserTemplate
 {
     public class AdminUser : UserTemplate
     {
@@ -16,10 +16,10 @@ namespace BusinessLogicService.User.UserTemplate
             {
                 UserName = "admin",
                 UserPermission = UserPermission.SA,
-                ModulePermissions = new List<ModulePermission>
+                ModulePermissions = new List<ModulePermissionContainer>
                 {
-                    ModulePermission.BASE,
-                    ModulePermission.VENDORMASTER
+                    new ModulePermissionContainer() { ModulePermission = ModulePermission.BASE, Write = true },
+                    new ModulePermissionContainer() { ModulePermission = ModulePermission.VENDORMASTER, Write = true },
                 }
             };
         }
@@ -33,10 +33,11 @@ namespace BusinessLogicService.User.UserTemplate
             {
                 UserName = "user",
                 UserPermission = UserPermission.USR,
-                ModulePermissions = new List<ModulePermission>
-                    {
-                        ModulePermission.BASE
-                    }
+                ModulePermissions = new List<ModulePermissionContainer>
+                {
+                    new ModulePermissionContainer() { ModulePermission = ModulePermission.BASE, Write = false },
+                    new ModulePermissionContainer() { ModulePermission = ModulePermission.VENDORMASTER, Write = true },
+                }
             };
         }
     }
