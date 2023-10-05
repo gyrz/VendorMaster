@@ -9,37 +9,36 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VendorMaster.Extensions;
 
-
 namespace VendorMaster.Controllers
 {
     [ApiController]
-    [Route("api/city")]
+    [Route("api/address")]
     [Authorize]
-    [RoleAuth(UserPermission.SA)]
+    [RoleAuth(UserPermission.MGR)]
     [ModuleAuth(ModulePermission.BASE)]
-    public class CityController : Controller
+    public class AddressController : Controller
     {
-        private readonly ICityService cityService;
+        private readonly IAddressService addressService;
         private readonly IRedisCache redisCache;
 
-        public CityController(ICityService cityService, IRedisCache redisCache)
+        public AddressController(IAddressService addressService, IRedisCache redisCache)
         {
-            this.cityService = cityService;
+            this.addressService = addressService;
             this.redisCache = redisCache;
         }
 
         [HttpPost("")]
         [HasWritePermissionForModule(ModulePermission.BASE)]
-        public async Task<IActionResult> AddOrUpdate(CitySimpleDto cityDto)
+        public async Task<IActionResult> AddOrUpdate(AddressSimpleDto addressDto)
         {
-            var res = await cityService.AddOrUpdate(cityDto);
+            var res = await addressService.AddOrUpdate(addressDto);
             if (res.ResultCode == 400)
                 return BadRequest(res);
 
             if (res.ResultCode == 404)
                 return NotFound(res);
 
-            redisCache.Get<CityDto>(typeof(CityDto).ToString(), res.Data, async () => await cityService.Get(res.Data));
+            redisCache.Get<AddressDto>(typeof(AddressDto).ToString(), res.Data, async () => await addressService.Get(res.Data));
 
             return Ok(res);
         }
@@ -47,7 +46,7 @@ namespace VendorMaster.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var res = await redisCache.Get<CityDto>(typeof(CityDto).ToString(), id, async () => await cityService.Get(id));
+            var res = await redisCache.Get<AddressDto>(typeof(AddressDto).ToString(), id, async () => await addressService.Get(id));
             if (res.ResultCode == 400)
                 return BadRequest(res);
 
@@ -60,7 +59,7 @@ namespace VendorMaster.Controllers
         [HttpGet("list")]
         public async Task<IActionResult> GetList()
         {
-            var res = await redisCache.GetListUntracked<CityDto>(typeof(CityDto).ToString(), async (int[] idArr) => await cityService.GetList(idArr));
+            var res = await redisCache.GetListUntracked<AddressDto>(typeof(AddressDto).ToString(), async (int[] idArr) => await addressService.GetList(idArr));
             if (res.ResultCode == 400)
                 return BadRequest(res);
 
@@ -74,7 +73,7 @@ namespace VendorMaster.Controllers
         [HasWritePermissionForModule(ModulePermission.BASE)]
         public async Task<IActionResult> Remove(int id)
         {
-            var res = await redisCache.Remove<CityDto>(typeof(CityDto).ToString(), id, async () => await cityService.Remove(id));
+            var res = await redisCache.Remove<AddressDto>(typeof(AddressDto).ToString(), id, async () => await addressService.Remove(id));
             if (res.ResultCode == 400)
                 return BadRequest(res);
 

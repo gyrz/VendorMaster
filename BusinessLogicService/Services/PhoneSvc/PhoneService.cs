@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contracts;
-using Contracts.Dto.Country;
+using Contracts.Dto;
+using Contracts.Dto.Phone;
 using DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
@@ -14,68 +15,68 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace BusinessLogicService.Services.CountrySvc
+namespace BusinessLogicService.Services.PhoneSvc
 {
-    public class CountryService : ICountryService
+    public class PhoneService : IPhoneService
     {
         private readonly VendorDbContext vendorDbContext;
         private readonly IMapper mapper;
-        public CountryService(VendorDbContext vendorDbContext, IMapper mapper)
+        public PhoneService(VendorDbContext vendorDbContext, IMapper mapper)
         {
             this.vendorDbContext = vendorDbContext;
             this.mapper = mapper;
         }
 
-        public async Task<Result<int>> AddOrUpdate(CountryDto country)
+        public async Task<Result<int>> AddOrUpdate(PhoneDto phone)
         {
-            var countryValidation =
-                new CountryValidator(vendorDbContext, country);
+            var phoneValidation =
+                new PhoneValidator(vendorDbContext, phone);
 
-            var validationResult = countryValidation.Handle();
+            var validationResult = phoneValidation.Handle();
             if (!string.IsNullOrEmpty(validationResult))
             {
                 return new Result<int> { ResultCode = 400, Message = validationResult };
             }
 
-            var c = await vendorDbContext.Countries.FirstOrDefaultAsync(x => x.Id == country.Id);
-            if (c == null)
+            var p = await vendorDbContext.Phones.FirstOrDefaultAsync(x => x.Id == phone.Id);
+            if (p == null)
             {
-                c = new Country();
-                c = mapper.Map<Country>(country);
-                vendorDbContext.Countries.Add(c);
+                p = new Phone();
+                p = mapper.Map<Phone>(phone);
+                vendorDbContext.Phones.Add(p);
             }
             else
             {
-                c = mapper.Map<Country>(country);
+                p = mapper.Map<Phone>(phone);
             }
 
             await vendorDbContext.SaveChangesAsync();
 
-            return new Result<int>(c.Id);
+            return new Result<int>(p.Id);
         }
 
-        public async Task<Result<CountryDto>> Get(int id)
+        public async Task<Result<PhoneDto>> Get(int id)
         {
-            var res = await vendorDbContext.Countries
+            var res = await vendorDbContext.Phones
                 .FirstOrDefaultAsync(x => x.Id == id);
-            if (res == null) return new Result<CountryDto> { ResultCode = 404 };
+            if (res == null) return new Result<PhoneDto> { ResultCode = 404 };
 
-            return new Result<CountryDto>(mapper.Map<CountryDto>(res));
+            return new Result<PhoneDto>(mapper.Map<PhoneDto>(res));
         }
 
-        public async Task<Result<Dictionary<int, CountryDto>>> GetList(int[] idArr)
+        public async Task<Result<Dictionary<int, PhoneDto>>> GetList(int[] idArr)
         {
-            var result = new Result<Dictionary<int, CountryDto>>()
+            var result = new Result<Dictionary<int, PhoneDto>>()
             {
-                Data = new Dictionary<int, CountryDto>()
+                Data = new Dictionary<int, PhoneDto>()
             };
 
-            var count = await vendorDbContext.Countries.CountAsync();
+            var count = await vendorDbContext.Phones.CountAsync();
             if(idArr?.Length == count) return result;
 
-            var res = await vendorDbContext.Countries
+            var res = await vendorDbContext.Phones
                 .Where(x => !idArr.Contains(x.Id))
-                .Select(x => mapper.Map<CountryDto>(x))
+                .Select(x => mapper.Map<PhoneDto>(x))
                 .ToListAsync();
 
             foreach (var itm in res)
@@ -88,10 +89,10 @@ namespace BusinessLogicService.Services.CountrySvc
 
         public async Task<Result<bool>> Remove(int id)
         {
-            var c = await vendorDbContext.Countries.FirstOrDefaultAsync(x => x.Id == id);
-            if (c != null)
+            var p = await vendorDbContext.Phones.FirstOrDefaultAsync(x => x.Id == id);
+            if (p != null)
             {
-                vendorDbContext.Countries.Remove(c);
+                vendorDbContext.Phones.Remove(p);
                 await vendorDbContext.SaveChangesAsync();
                 return new Result<bool>(true);
             }
@@ -101,10 +102,10 @@ namespace BusinessLogicService.Services.CountrySvc
 
         public async Task<Result<bool>> RemoveAll(IEnumerable<int> exceptIds, int? vendorId = null)
         {
-            var c = await vendorDbContext.Countries.Where(x => !exceptIds.Contains(x.Id)).ToListAsync();
-            if (c != null)
+            var p = await vendorDbContext.Phones.Where(x => (vendorId == null || x.VendorId == vendorId) && !exceptIds.Contains(x.Id)).ToListAsync();
+            if (p != null)
             {
-                vendorDbContext.Countries.RemoveRange(c);
+                vendorDbContext.Phones.RemoveRange(p);
                 await vendorDbContext.SaveChangesAsync();
                 return new Result<bool>(true);
             }

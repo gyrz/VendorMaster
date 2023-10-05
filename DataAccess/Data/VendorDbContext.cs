@@ -52,7 +52,7 @@ namespace DataAccess.Data
                             baseEntity.LastModifiedAt = currentTime;
                             break;
                         case EntityState.Modified:
-                            entry.Property("CreatedAt").IsModified = false; // Ne módosítsuk a CreatedAt tulajdonságot
+                            entry.Property("CreatedAt").IsModified = false;
                             baseEntity.LastModifiedAt = currentTime;
                             break;
                     }

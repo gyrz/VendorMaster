@@ -99,5 +99,18 @@ namespace BusinessLogicService.Services.CitySvc
 
             return new Result<bool> { Data = false, ResultCode = 404 };
         }
+
+        public async Task<Result<bool>> RemoveAll(IEnumerable<int> exceptIds, int? vendorId = null)
+        {
+            var c = await vendorDbContext.Cities.Where(x => !exceptIds.Contains(x.Id)).ToListAsync();
+            if (c != null)
+            {
+                vendorDbContext.Cities.RemoveRange(c);
+                await vendorDbContext.SaveChangesAsync();
+                return new Result<bool>(true);
+            }
+
+            return new Result<bool> { Data = false, ResultCode = 404 };
+        }
     }
 }

@@ -4,6 +4,7 @@ using DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(VendorDbContext))]
-    partial class VendorDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231005131422_bankaccountredesign")]
+    partial class bankaccountredesign
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -173,9 +176,11 @@ namespace DataAccess.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("PersonId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int?>("VendorId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -234,6 +239,7 @@ namespace DataAccess.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("PersonId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("PhoneNumber")
@@ -241,6 +247,7 @@ namespace DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("VendorId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -371,12 +378,14 @@ namespace DataAccess.Migrations
                         .WithMany("Emails")
                         .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
                         .HasConstraintName("FK_Person_Email");
 
                     b.HasOne("Models.Entities.Vendor", "Vendor")
                         .WithMany("Emails")
                         .HasForeignKey("VendorId")
                         .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
                         .HasConstraintName("FK_Vendor_Email");
 
                     b.Navigation("Person");
@@ -402,12 +411,14 @@ namespace DataAccess.Migrations
                         .WithMany("Phones")
                         .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
                         .HasConstraintName("FK_Person_Phone");
 
                     b.HasOne("Models.Entities.Vendor", "Vendor")
                         .WithMany("Phones")
                         .HasForeignKey("VendorId")
                         .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
                         .HasConstraintName("FK_Vendor_Phone");
 
                     b.Navigation("Person");

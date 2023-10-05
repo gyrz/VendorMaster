@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Contracts;
-using Contracts.Dto.Country;
+using Contracts.Dto.Email;
 using DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
@@ -14,68 +14,68 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace BusinessLogicService.Services.CountrySvc
+namespace BusinessLogicService.Services.EmailSvc
 {
-    public class CountryService : ICountryService
+    public class EmailService : IEmailService
     {
         private readonly VendorDbContext vendorDbContext;
         private readonly IMapper mapper;
-        public CountryService(VendorDbContext vendorDbContext, IMapper mapper)
+        public EmailService(VendorDbContext vendorDbContext, IMapper mapper)
         {
             this.vendorDbContext = vendorDbContext;
             this.mapper = mapper;
         }
 
-        public async Task<Result<int>> AddOrUpdate(CountryDto country)
+        public async Task<Result<int>> AddOrUpdate(EmailDto email)
         {
-            var countryValidation =
-                new CountryValidator(vendorDbContext, country);
+            var emailValidation =
+                new EmailValidator(vendorDbContext, email);
 
-            var validationResult = countryValidation.Handle();
+            var validationResult = emailValidation.Handle();
             if (!string.IsNullOrEmpty(validationResult))
             {
                 return new Result<int> { ResultCode = 400, Message = validationResult };
             }
 
-            var c = await vendorDbContext.Countries.FirstOrDefaultAsync(x => x.Id == country.Id);
-            if (c == null)
+            var e = await vendorDbContext.Emails.FirstOrDefaultAsync(x => x.Id == email.Id);
+            if (e == null)
             {
-                c = new Country();
-                c = mapper.Map<Country>(country);
-                vendorDbContext.Countries.Add(c);
+                e = new Email();
+                e = mapper.Map<Email>(email);
+                vendorDbContext.Emails.Add(e);
             }
             else
             {
-                c = mapper.Map<Country>(country);
+                e = mapper.Map<Email>(email);
             }
 
             await vendorDbContext.SaveChangesAsync();
 
-            return new Result<int>(c.Id);
+            return new Result<int>(e.Id);
         }
 
-        public async Task<Result<CountryDto>> Get(int id)
+        public async Task<Result<EmailDto>> Get(int id)
         {
-            var res = await vendorDbContext.Countries
+            var res = await vendorDbContext.Emails
                 .FirstOrDefaultAsync(x => x.Id == id);
-            if (res == null) return new Result<CountryDto> { ResultCode = 404 };
+            if (res == null) return new Result<EmailDto> { ResultCode = 404 };
 
-            return new Result<CountryDto>(mapper.Map<CountryDto>(res));
+            return new Result<EmailDto>(mapper.Map<EmailDto>(res));
         }
 
-        public async Task<Result<Dictionary<int, CountryDto>>> GetList(int[] idArr)
+        public async Task<Result<Dictionary<int, EmailDto>>> GetList(int[] idArr)
         {
-            var result = new Result<Dictionary<int, CountryDto>>()
+            var result = new Result<Dictionary<int, EmailDto>>()
             {
-                Data = new Dictionary<int, CountryDto>()
+                Data = new Dictionary<int, EmailDto>()
             };
 
-            var count = await vendorDbContext.Countries.CountAsync();
+            var count = await vendorDbContext.Emails.CountAsync();
             if(idArr?.Length == count) return result;
 
-            var res = await vendorDbContext.Countries
+            var res = await vendorDbContext.Emails
                 .Where(x => !idArr.Contains(x.Id))
-                .Select(x => mapper.Map<CountryDto>(x))
+                .Select(x => mapper.Map<EmailDto>(x))
                 .ToListAsync();
 
             foreach (var itm in res)
@@ -88,10 +88,10 @@ namespace BusinessLogicService.Services.CountrySvc
 
         public async Task<Result<bool>> Remove(int id)
         {
-            var c = await vendorDbContext.Countries.FirstOrDefaultAsync(x => x.Id == id);
-            if (c != null)
+            var e = await vendorDbContext.Emails.FirstOrDefaultAsync(x => x.Id == id);
+            if (e != null)
             {
-                vendorDbContext.Countries.Remove(c);
+                vendorDbContext.Emails.Remove(e);
                 await vendorDbContext.SaveChangesAsync();
                 return new Result<bool>(true);
             }
@@ -101,10 +101,10 @@ namespace BusinessLogicService.Services.CountrySvc
 
         public async Task<Result<bool>> RemoveAll(IEnumerable<int> exceptIds, int? vendorId = null)
         {
-            var c = await vendorDbContext.Countries.Where(x => !exceptIds.Contains(x.Id)).ToListAsync();
-            if (c != null)
+            var e = await vendorDbContext.Emails.Where(x => (vendorId == null || x.VendorId == vendorId) && !exceptIds.Contains(x.Id)).ToListAsync();
+            if (e != null)
             {
-                vendorDbContext.Countries.RemoveRange(c);
+                vendorDbContext.Emails.RemoveRange(e);
                 await vendorDbContext.SaveChangesAsync();
                 return new Result<bool>(true);
             }

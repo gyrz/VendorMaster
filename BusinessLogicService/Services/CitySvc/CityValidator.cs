@@ -27,9 +27,9 @@ namespace BusinessLogicService.Services.CitySvc
 
         public bool CheckIfAlreadyExists(CitySimpleDto cityDto)
         {
-            var country = vendorDbContext.Cities.FirstOrDefault(x => x.Name == cityDto.Name && x.CountryId == cityDto.CountryId);
-            if (country == null) return false;
-            return country.Id != cityDto.Id;
+            var city = vendorDbContext.Cities.FirstOrDefault(x => x.Name == cityDto.Name && x.CountryId == cityDto.CountryId);
+            if (city == null) return false;
+            return city.Id != cityDto.Id;
         }
     }
 }

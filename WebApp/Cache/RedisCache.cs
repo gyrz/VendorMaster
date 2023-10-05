@@ -105,6 +105,22 @@ namespace DataAccess.Cache
                         cachedList.Add(item.Key, item.Value);
                 }
             }
+            else if(cachedList == null)
+            {
+                int[] ints = { };
+                var res = await func(ints);
+                if (res.ResultCode != 200)
+                {
+                    return new Result<IEnumerable<T>>() { ResultCode = res.ResultCode, Message = res.Message };
+                }
+
+                cachedList = new Dictionary<int, T>();
+                foreach (var item in res.Data)
+                {
+                    cachedList.Add(item.Key, item.Value);
+                }
+            }
+
 
             await dataBase.StringSetAndGetAsync(key, JsonConvert.SerializeObject(cachedList), DateTimeOffset.Now.AddMinutes(5) - DateTimeOffset.Now);
 
@@ -126,7 +142,7 @@ namespace DataAccess.Cache
             return res.Value;
         }
 
-        public async Task<Result<T>> Remove<T>(string key, int id, Func<Task<Result<T>>> func)
+        public async Task<Result<bool>> Remove<T>(string key, int id, Func<Task<Result<bool>>> func)
         {
             var data = await func();
             if(data.ResultCode != 200)

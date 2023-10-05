@@ -5,14 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Contracts.Dto.Zip;
+using Contracts.Dto.Vendor;
 
 namespace BusinessLogicService.Services.ZipSvc
 {
-    public interface IZipService
+    public interface IZipService : IBase<ZipSimpleDto, ZipDto>
     {
-        public Task<Result<int>> AddOrUpdate(ZipSimpleDto Zip);
-        public Task<Result<bool>> Remove(int id);
-        public Task<Result<Dictionary<int, ZipDto>>> GetList(int[] idArr);
-        public Task<Result<ZipDto>> Get(int id);
     }
 }

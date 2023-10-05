@@ -10,7 +10,8 @@ namespace Models.Entities
     {
         public string IBAN { get; set; }
         public string BIC { get; set; }
-        public int? VendorId { get; set; }
+        public string BankName { get; set; }
+        public int VendorId { get; set; }
 
         public Vendor Vendor { get; set; }
     }

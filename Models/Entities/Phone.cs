@@ -12,7 +12,7 @@ namespace Models.Entities
         public int? VendorId { get; set; }
         public string PhoneNumber { get; set; }
 
-        public Person Person { get; set; }
-        public Vendor Vendor { get; set; }
+        public Person? Person { get; set; }
+        public Vendor? Vendor { get; set; }
     }
 }

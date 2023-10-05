@@ -10,9 +10,9 @@ namespace Models.Entities
     {
         public int? PersonId { get; set; }
         public int? VendorId { get; set; }
-        public string Address { get; set; } // TODO: Add validation
+        public string Address { get; set; }
 
-        public Person Person { get; set; }
-        public Vendor Vendor { get; set; }
+        public Person? Person { get; set; }
+        public Vendor? Vendor { get; set; }
     }
 }

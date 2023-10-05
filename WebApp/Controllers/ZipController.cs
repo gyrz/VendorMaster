@@ -72,7 +72,7 @@ namespace VendorMaster.Controllers
         [HasWritePermissionForModule(ModulePermission.BASE)]
         public async Task<IActionResult> Remove(int id)
         {
-            var res = await redisCache.Remove<bool>(typeof(ZipDto).ToString(), id, async () => await zipService.Remove(id));
+            var res = await redisCache.Remove<ZipDto>(typeof(ZipDto).ToString(), id, async () => await zipService.Remove(id));
             if (res.ResultCode == 400)
                 return BadRequest(res);
 

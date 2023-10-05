@@ -1,45 +1,42 @@
-﻿using BusinessLogicService.Services.AddressSvc;
-using BusinessLogicService.Services.CitySvc;
+﻿using BusinessLogicService.Services.EmailSvc;
 using Contracts;
-using Contracts.Dto.Address;
-using Contracts.Dto.City;
+using Contracts.Dto.Email;
 using Contracts.Dto.Enums;
 using DataAccess.Cache;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VendorMaster.Extensions;
 
-
 namespace VendorMaster.Controllers
 {
     [ApiController]
-    [Route("api/city")]
+    [Route("api/email")]
     [Authorize]
     [RoleAuth(UserPermission.SA)]
     [ModuleAuth(ModulePermission.BASE)]
-    public class CityController : Controller
+    public class EmailController : Controller
     {
-        private readonly ICityService cityService;
+        private readonly IEmailService emailService;
         private readonly IRedisCache redisCache;
 
-        public CityController(ICityService cityService, IRedisCache redisCache)
+        public EmailController(IEmailService emailService, IRedisCache redisCache)
         {
-            this.cityService = cityService;
+            this.emailService = emailService;
             this.redisCache = redisCache;
         }
 
         [HttpPost("")]
         [HasWritePermissionForModule(ModulePermission.BASE)]
-        public async Task<IActionResult> AddOrUpdate(CitySimpleDto cityDto)
+        public async Task<IActionResult> AddOrUpdate(EmailDto emailDto)
         {
-            var res = await cityService.AddOrUpdate(cityDto);
+            var res = await emailService.AddOrUpdate(emailDto);
             if (res.ResultCode == 400)
                 return BadRequest(res);
 
             if (res.ResultCode == 404)
                 return NotFound(res);
 
-            redisCache.Get<CityDto>(typeof(CityDto).ToString(), res.Data, async () => await cityService.Get(res.Data));
+            redisCache.Get<EmailDto>(typeof(EmailDto).ToString(), res.Data, async () => await emailService.Get(res.Data));
 
             return Ok(res);
         }
@@ -47,8 +44,8 @@ namespace VendorMaster.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var res = await redisCache.Get<CityDto>(typeof(CityDto).ToString(), id, async () => await cityService.Get(id));
-            if (res.ResultCode == 400)
+            var res = await redisCache.Get<EmailDto>(typeof(EmailDto).ToString(), id, async () => await emailService.Get(id));
+            if(res.ResultCode == 400)
                 return BadRequest(res);
 
             if (res.ResultCode == 404)
@@ -60,7 +57,7 @@ namespace VendorMaster.Controllers
         [HttpGet("list")]
         public async Task<IActionResult> GetList()
         {
-            var res = await redisCache.GetListUntracked<CityDto>(typeof(CityDto).ToString(), async (int[] idArr) => await cityService.GetList(idArr));
+            var res = await redisCache.GetListUntracked<EmailDto>(typeof(EmailDto).ToString(), async (int[] idArr) => await emailService.GetList(idArr));
             if (res.ResultCode == 400)
                 return BadRequest(res);
 
@@ -74,7 +71,7 @@ namespace VendorMaster.Controllers
         [HasWritePermissionForModule(ModulePermission.BASE)]
         public async Task<IActionResult> Remove(int id)
         {
-            var res = await redisCache.Remove<CityDto>(typeof(CityDto).ToString(), id, async () => await cityService.Remove(id));
+            var res = await redisCache.Remove<EmailDto>(typeof(EmailDto).ToString(), id, async () => await emailService.Remove(id));
             if (res.ResultCode == 400)
                 return BadRequest(res);
 

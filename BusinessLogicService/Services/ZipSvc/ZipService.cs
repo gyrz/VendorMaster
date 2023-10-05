@@ -35,21 +35,21 @@ namespace BusinessLogicService.Services.ZipSvc
                 return new Result<int> { ResultCode = 400, Message = validationResult };
             }
 
-            var c = await vendorDbContext.ZipCodes.FirstOrDefaultAsync(x => x.Id == zip.Id);
-            if (c == null)
+            var z = await vendorDbContext.ZipCodes.FirstOrDefaultAsync(x => x.Id == zip.Id);
+            if (z == null)
             {
-                c = new Zip();
-                c = mapper.Map<Zip>(zip);
-                vendorDbContext.ZipCodes.Add(c);
+                z = new Zip();
+                z = mapper.Map<Zip>(zip);
+                vendorDbContext.ZipCodes.Add(z);
             }
             else
             {
-                c = mapper.Map<Zip>(zip);
+                z = mapper.Map<Zip>(zip);
             }
 
             await vendorDbContext.SaveChangesAsync();
 
-            return new Result<int>(c.Id);
+            return new Result<int>(z.Id);
         }
 
         public async Task<Result<ZipDto>> Get(int id)
@@ -88,10 +88,23 @@ namespace BusinessLogicService.Services.ZipSvc
 
         public async Task<Result<bool>> Remove(int id)
         {
-            var c = await vendorDbContext.ZipCodes.FirstOrDefaultAsync(x => x.Id == id);
-            if (c != null)
+            var z = await vendorDbContext.ZipCodes.FirstOrDefaultAsync(x => x.Id == id);
+            if (z != null)
             {
-                vendorDbContext.ZipCodes.Remove(c);
+                vendorDbContext.ZipCodes.Remove(z);
+                await vendorDbContext.SaveChangesAsync();
+                return new Result<bool>(true);
+            }
+
+            return new Result<bool> { Data = false, ResultCode = 404 };
+        }
+
+        public async Task<Result<bool>> RemoveAll(IEnumerable<int> exceptIds, int? vendorId = null)
+        {
+            var z = await vendorDbContext.ZipCodes.Where(x => !exceptIds.Contains(x.Id)).ToListAsync();
+            if (z != null)
+            {
+                vendorDbContext.ZipCodes.RemoveRange(z);
                 await vendorDbContext.SaveChangesAsync();
                 return new Result<bool>(true);
             }

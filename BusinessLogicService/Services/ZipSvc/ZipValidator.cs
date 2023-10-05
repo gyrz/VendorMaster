@@ -27,9 +27,9 @@ namespace BusinessLogicService.Services.ZipSvc
 
         public bool CheckIfAlreadyExists(ZipSimpleDto zipDto)
         {
-            var country = vendorDbContext.ZipCodes.FirstOrDefault(x => x.Code == zipDto.Code && x.CountryId == zipDto.CountryId);
-            if (country == null) return false;
-            return country.Id != zipDto.Id;
+            var zip = vendorDbContext.ZipCodes.FirstOrDefault(x => x.Code == zipDto.Code && x.CountryId == zipDto.CountryId);
+            if (zip == null) return false;
+            return zip.Id != zipDto.Id;
         }
     }
 }
