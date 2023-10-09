@@ -18,6 +18,8 @@ namespace VendorMaster.Handlers
             foreach (var tranzaction in tranzactions)
             {
                 var output = await tranzaction.Handle();
+                err.Append(output);
+                
                 if (forced && !string.IsNullOrEmpty(output))
                 {
                     var rbErrors = await RollBack();
@@ -27,9 +29,10 @@ namespace VendorMaster.Handlers
                         RollBackError = rbErrors 
                     };
                 }
-
-                err.Append(output);
             }
+
+            foreach (var tranzaction in tranzactions)
+                await tranzaction.RemoveAll();
 
             return new IterationResult() 
             { 

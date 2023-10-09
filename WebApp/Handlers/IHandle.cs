@@ -4,5 +4,6 @@
     {
         Task<string> Handle();
         Task<string> RollBack();
+        Task RemoveAll();
     }
 }

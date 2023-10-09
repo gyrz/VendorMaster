@@ -51,10 +51,12 @@ namespace VendorMaster.Handlers.VendorHandler
                 await redisCache.Get<T2>(typeof(T2).ToString(), r.Data, async () => await srv.Get(r.Data));
             }
 
-            // remove entities that are not in the list
-            if (handledIds.Count > 0) await srv.RemoveAll(handledIds, id);
-
             return err.ToString();
+        }
+
+        public async Task RemoveAll()
+        {
+            if (handledIds.Count > 0) await srv.RemoveAll(handledIds, id);
         }
 
         public async Task<string> RollBack()
