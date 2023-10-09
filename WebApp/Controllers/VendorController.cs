@@ -20,6 +20,7 @@ using Contracts.Dto.Email;
 using VendorMaster.Handlers.VendorHandler;
 using VendorMaster.Controllers.TemplateControllers;
 using VendorMaster.Handlers;
+using Newtonsoft.Json;
 
 namespace VendorMaster.Controllers
 {
@@ -83,15 +84,9 @@ namespace VendorMaster.Controllers
                 );
 
             var iterationResult = await vendorHandleIterator.Start();
-            res.Message = iterationResult.Item1;
-
-            if(forced && !string.IsNullOrEmpty(iterationResult.Item2))
-            {
-                res.Message += "Rollback errors: ";
-                res.Message += iterationResult.Item2;
-            }
-
-            if(forced && !string.IsNullOrEmpty(res.Message))
+            res.Message = JsonConvert.SerializeObject(iterationResult);
+            
+            if(forced && !iterationResult.IsSuccess)
             {
                 await service.Remove(res.Data);
                 return BadRequest(res);

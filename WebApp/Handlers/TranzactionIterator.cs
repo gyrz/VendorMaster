@@ -12,7 +12,7 @@ namespace VendorMaster.Handlers
             this.forced = forced;
         }
 
-        public async Task<(string, string)> Start()
+        public async Task<IterationResult> Start()
         {
             StringBuilder err = new StringBuilder();
             foreach (var tranzaction in tranzactions)
@@ -21,13 +21,20 @@ namespace VendorMaster.Handlers
                 if (forced && !string.IsNullOrEmpty(output))
                 {
                     var rbErrors = await RollBack();
-                    return (err.ToString(), rbErrors);
+                    return new IterationResult() 
+                    { 
+                        Error = err.ToString(), 
+                        RollBackError = rbErrors 
+                    };
                 }
 
                 err.Append(output);
             }
 
-            return (err.ToString(), string.Empty);
+            return new IterationResult() 
+            { 
+                Error = err.ToString()
+            };
         }
 
         public async Task<string> RollBack()
