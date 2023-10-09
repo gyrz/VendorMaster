@@ -40,7 +40,7 @@ namespace VendorMaster.Handlers
             };
         }
 
-        public async Task<string> RollBack()
+        private async Task<string> RollBack()
         {
             StringBuilder err = new StringBuilder();
             for (int i = tranzactions.Length - 1; i >= 0; i--)
