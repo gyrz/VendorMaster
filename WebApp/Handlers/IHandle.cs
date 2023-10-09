@@ -2,6 +2,6 @@
 {
     public interface IHandle
     {
-        Task<string> handle();
+        Task<(string, int)> Handle();
     }
 }

@@ -19,6 +19,7 @@ using Contracts.Dto.Person;
 using Contracts.Dto.Email;
 using VendorMaster.Handlers.VendorHandler;
 using VendorMaster.Controllers.TemplateControllers;
+using VendorMaster.Handlers;
 
 namespace VendorMaster.Controllers
 {
@@ -65,16 +66,16 @@ namespace VendorMaster.Controllers
             if (res.ResultCode == 404)
                 return NotFound(res);
 
-            VendorHandleIterator vendorHandleIterator = new VendorHandleIterator(
-                new VendorHandle<AddressSimpleDto, AddressDto>
+            TranzactionIterator vendorHandleIterator = new TranzactionIterator(
+                new VendorTranzaction<AddressSimpleDto, AddressDto>
                     (res.Data, vendorDto.Addresses, addressService, redisCache),
-                new VendorHandle<PhoneDto, PhoneDto>
+                new VendorTranzaction<PhoneDto, PhoneDto>
                     (res.Data, vendorDto.Phones, phoneService, redisCache),
-                new VendorHandle<BankAccountDto, BankAccountDto>
+                new VendorTranzaction<BankAccountDto, BankAccountDto>
                     (res.Data, vendorDto.BankAccounts, bankAccountService, redisCache),
-                new VendorHandle<PersonSimpleDto, PersonDto>
+                new VendorTranzaction<PersonSimpleDto, PersonDto>
                     (res.Data, vendorDto.ContactPersons, personService, redisCache),
-                new VendorHandle<EmailDto, EmailDto>
+                new VendorTranzaction<EmailDto, EmailDto>
                     (res.Data, vendorDto.Emails, emailService, redisCache)
                 );
 

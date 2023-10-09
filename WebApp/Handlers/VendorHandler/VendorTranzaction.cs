@@ -8,14 +8,14 @@ using System.Text;
 
 namespace VendorMaster.Handlers.VendorHandler
 {
-    public class VendorHandle<T, T2> : IHandle where T : class where T2 : class
+    public class VendorTranzaction<T, T2> : IHandle where T : class where T2 : class
     {
         private readonly int id;
         private readonly IEnumerable<T> dtos;
         private readonly IBaseService<T, T2> srv;
         private readonly IRedisCache redisCache;
 
-        public VendorHandle(
+        public VendorTranzaction(
             int id,
             IEnumerable<T> dtos,
             IBaseService<T, T2> srv,
@@ -27,7 +27,7 @@ namespace VendorMaster.Handlers.VendorHandler
             this.redisCache = redisCache;
         }
 
-        public async Task<string> handle()
+        public async Task<string> Handle()
         {
             if (dtos == null || dtos.Count() == 0) return string.Empty;
 
@@ -35,7 +35,7 @@ namespace VendorMaster.Handlers.VendorHandler
             List<int> handledIds = new List<int>();
             foreach (var item in dtos)
             {
-                if (item is not SimpleVendorDto dto) continue;
+                if (item is not BaseVendorRelationDto dto) continue;
 
                 dto.VendorId = id;
                 var r = await srv.AddOrUpdate(item);
