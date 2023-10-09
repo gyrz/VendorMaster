@@ -66,7 +66,10 @@ namespace VendorMaster.Controllers
             if (res.ResultCode == 404)
                 return NotFound(res);
 
+            var forced = true;
+
             TranzactionIterator vendorHandleIterator = new TranzactionIterator(
+                forced,
                 new VendorTranzaction<AddressSimpleDto, AddressDto>
                     (res.Data, vendorDto.Addresses, addressService, redisCache),
                 new VendorTranzaction<PhoneDto, PhoneDto>
@@ -79,9 +82,24 @@ namespace VendorMaster.Controllers
                     (res.Data, vendorDto.Emails, emailService, redisCache)
                 );
 
-            res.Message = await vendorHandleIterator.Start();
+            var iterationResult = await vendorHandleIterator.Start();
+            res.Message = iterationResult.Item1;
 
-            redisCache.Get<VendorDto>(typeof(VendorDto).ToString(), res.Data, async () => await service.Get(res.Data));
+            if(forced && !string.IsNullOrEmpty(iterationResult.Item2))
+            {
+                res.Message += "Rollback errors: ";
+                res.Message += iterationResult.Item2;
+            }
+
+            if(forced && !string.IsNullOrEmpty(res.Message))
+            {
+                await service.Remove(res.Data);
+                return BadRequest(res);
+            }
+            else
+            {
+                redisCache.Get<VendorDto>(typeof(VendorDto).ToString(), res.Data, async () => await service.Get(res.Data));
+            }
 
             return Ok(res);
         }

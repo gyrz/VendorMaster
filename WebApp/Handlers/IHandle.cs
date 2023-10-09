@@ -2,6 +2,7 @@
 {
     public interface IHandle
     {
-        Task<(string, int)> Handle();
+        Task<string> Handle();
+        Task<string> RollBack();
     }
 }

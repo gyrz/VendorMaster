@@ -14,6 +14,7 @@ namespace VendorMaster.Handlers.VendorHandler
         private readonly IEnumerable<T> dtos;
         private readonly IBaseService<T, T2> srv;
         private readonly IRedisCache redisCache;
+        private List<int> handledIds;
 
         public VendorTranzaction(
             int id,
@@ -25,6 +26,7 @@ namespace VendorMaster.Handlers.VendorHandler
             this.dtos = dtos;
             this.srv = srv;
             this.redisCache = redisCache;
+            handledIds = new List<int>();
         }
 
         public async Task<string> Handle()
@@ -32,7 +34,7 @@ namespace VendorMaster.Handlers.VendorHandler
             if (dtos == null || dtos.Count() == 0) return string.Empty;
 
             StringBuilder err = new StringBuilder();
-            List<int> handledIds = new List<int>();
+            
             foreach (var item in dtos)
             {
                 if (item is not BaseVendorRelationDto dto) continue;
@@ -46,11 +48,29 @@ namespace VendorMaster.Handlers.VendorHandler
                 }
 
                 handledIds.Add(r.Data);
-                await redisCache.Get(typeof(T2).ToString(), r.Data, async () => await srv.Get(r.Data));
+                await redisCache.Get<T2>(typeof(T2).ToString(), r.Data, async () => await srv.Get(r.Data));
             }
 
             // remove entities that are not in the list
             if (handledIds.Count > 0) await srv.RemoveAll(handledIds, id);
+
+            return err.ToString();
+        }
+
+        public async Task<string> RollBack()
+        {
+            StringBuilder err = new StringBuilder();
+            for (int i = handledIds.Count - 1; i >= 0; i--)
+            {
+                int id = handledIds[i];
+                var r = await srv.Remove(id);
+                if (r.ResultCode == 400)
+                {
+                    err.AppendLine($"{typeof(T2).ToString()} with id: {id} cannot be deleted! Message: " + r.Message);
+                    continue;
+                }
+                await redisCache.Remove<T2>(typeof(T2).ToString(), id, async () => await srv.Remove(id));
+            }
 
             return err.ToString();
         }
