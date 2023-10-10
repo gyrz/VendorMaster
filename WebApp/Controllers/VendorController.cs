@@ -59,7 +59,6 @@ namespace VendorMaster.Controllers
         [HasWritePermissionForModule(ModulePermission.VENDORMASTER)]
         public override async Task<IActionResult> AddOrUpdate(VendorDto vendorDto)
         {
-            // Add or update vendor first
             var res = await service.AddOrUpdate(vendorDto);
             if (res.ResultCode == 400)
                 return BadRequest(res);
@@ -93,7 +92,7 @@ namespace VendorMaster.Controllers
             }
             else
             {
-                redisCache.Get<VendorDto>(typeof(VendorDto).ToString(), res.Data, async () => await service.Get(res.Data));
+                await redisCache.RefreshData<VendorDto>(typeof(VendorDto).ToString(), res.Data, async () => await service.Get(res.Data));
             }
 
             return Ok(res);

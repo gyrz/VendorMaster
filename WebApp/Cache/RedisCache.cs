@@ -19,6 +19,20 @@ namespace DataAccess.Cache
             this.dataBase = cm.GetDatabase();
         }
 
+        public async Task<Result<T>> RefreshData<T>(string key, int id, Func<Task<Result<T>>> func)
+        {
+            await RemoveData<T>(key, id);
+
+            var data = await func();
+            if (data.ResultCode != 200)
+            {
+                return data;
+            }
+
+            await SetData(key, id, data.Data, DateTimeOffset.Now.AddMinutes(5));
+            return data;
+        }
+
         public async Task<Result<T>> Get<T>(string key, int id, Func<Task<Result<T>>> func)
         {
             var res = await GetCache<T>(key, id);

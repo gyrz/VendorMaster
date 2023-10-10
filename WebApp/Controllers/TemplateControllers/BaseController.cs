@@ -27,7 +27,7 @@ namespace VendorMaster.Controllers.TemplateControllers
             if (res.ResultCode == 404)
                 return NotFound(res);
 
-            redisCache.Get(typeof(T2).ToString(), res.Data, async () => await service.Get(res.Data));
+            await redisCache.RefreshData(typeof(T2).ToString(), res.Data, async () => await service.Get(res.Data));
 
             return Ok(res);
         }
