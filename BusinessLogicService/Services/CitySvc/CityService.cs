@@ -40,13 +40,10 @@ namespace BusinessLogicService.Services.CitySvc
             if (c == null)
             {
                 c = new City();
-                c = mapper.Map<City>(city);
                 vendorDbContext.Cities.Add(c);
             }
-            else
-            {
-                c = mapper.Map<City>(city);
-            }
+
+            c = mapper.Map(city, c);
 
             await vendorDbContext.SaveChangesAsync();
 

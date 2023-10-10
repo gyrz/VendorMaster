@@ -41,13 +41,10 @@ namespace BusinessLogicService.Services.CountrySvc
             if (c == null)
             {
                 c = new Country();
-                c = mapper.Map<Country>(country);
                 vendorDbContext.Countries.Add(c);
             }
-            else
-            {
-                c = mapper.Map<Country>(country);
-            }
+
+            c = mapper.Map(country, c);
 
             await vendorDbContext.SaveChangesAsync();
 

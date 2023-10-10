@@ -42,14 +42,10 @@ namespace BusinessLogicService.Services.PhoneSvc
             if (p == null)
             {
                 p = new Phone();
-                p = mapper.Map<Phone>(phone);
                 vendorDbContext.Phones.Add(p);
             }
-            else
-            {
-                p = mapper.Map<Phone>(phone);
-            }
 
+            p = mapper.Map(phone, p);
             await vendorDbContext.SaveChangesAsync();
 
             return new Result<int>(p.Id);

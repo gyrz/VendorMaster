@@ -41,13 +41,10 @@ namespace BusinessLogicService.Services.EmailSvc
             if (e == null)
             {
                 e = new Email();
-                e = mapper.Map<Email>(email);
                 vendorDbContext.Emails.Add(e);
             }
-            else
-            {
-                e = mapper.Map<Email>(email);
-            }
+
+            e = mapper.Map(email, e);
 
             await vendorDbContext.SaveChangesAsync();
 

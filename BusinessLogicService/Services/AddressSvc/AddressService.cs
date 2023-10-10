@@ -40,13 +40,10 @@ namespace BusinessLogicService.Services.AddressSvc
             if (a == null)
             {
                 a = new Address();
-                a = mapper.Map<Address>(address);
                 vendorDbContext.Addresses.Add(a);
             }
-            else
-            {
-                a = mapper.Map<Address>(address);
-            }
+
+            a = mapper.Map(address, a);
 
             await vendorDbContext.SaveChangesAsync();
 

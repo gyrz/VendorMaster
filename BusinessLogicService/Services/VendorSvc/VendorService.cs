@@ -43,13 +43,10 @@ namespace BusinessLogicService.Services.VendorSvc
             if (v == null)
             {
                 v = new Vendor();
-                v = mapper.Map<Vendor>(simpleDto);
                 vendorDbContext.Vendors.Add(v);
             }
-            else
-            {
-                v = mapper.Map<Vendor>(simpleDto);
-            }
+
+            v = mapper.Map(simpleDto, v);
 
             await vendorDbContext.SaveChangesAsync();
 

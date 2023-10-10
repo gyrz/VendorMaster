@@ -39,13 +39,10 @@ namespace BusinessLogicService.Services.ZipSvc
             if (z == null)
             {
                 z = new Zip();
-                z = mapper.Map<Zip>(zip);
                 vendorDbContext.ZipCodes.Add(z);
             }
-            else
-            {
-                z = mapper.Map<Zip>(zip);
-            }
+
+            z = mapper.Map(zip, z);
 
             await vendorDbContext.SaveChangesAsync();
 

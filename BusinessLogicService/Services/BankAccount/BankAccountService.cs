@@ -40,13 +40,10 @@ namespace BusinessLogicService.Services.BankAccountSvc
             if (b == null)
             {
                 b = new BankAccount();
-                b = mapper.Map<BankAccount>(bankAccount);
                 vendorDbContext.BankAccounts.Add(b);
             }
-            else
-            {
-                b = mapper.Map<BankAccount>(bankAccount);
-            }
+
+            b = mapper.Map(bankAccount, b);
 
             await vendorDbContext.SaveChangesAsync();
 

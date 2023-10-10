@@ -42,13 +42,10 @@ namespace BusinessLogicService.Services.PersonSvc
             if (p == null)
             {
                 p = new Person();
-                p = mapper.Map<Person>(phone);
                 vendorDbContext.Persons.Add(p);
             }
-            else
-            {
-                p = mapper.Map<Person>(phone);
-            }
+
+            p = mapper.Map(phone, p);
 
             await vendorDbContext.SaveChangesAsync();
 
