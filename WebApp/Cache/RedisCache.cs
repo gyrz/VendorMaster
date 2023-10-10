@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccess.Cache
 {
@@ -29,7 +30,7 @@ namespace DataAccess.Cache
                 return data;
             }
 
-            await SetData(key, id, data.Data, DateTimeOffset.Now.AddMinutes(5));
+            await SetData(key, id, data.Data);
             return data;
         }
 
@@ -44,7 +45,7 @@ namespace DataAccess.Cache
                 return data;
             }
 
-            await SetData(key, id, data.Data, DateTimeOffset.Now.AddMinutes(5));
+            await SetData(key, id, data.Data);
 
             return data;
         }
@@ -144,22 +145,10 @@ namespace DataAccess.Cache
             };
         }
 
-        public async Task<T> AddOrUpdateCache<T>(string key, int id, T data)
-        {
-            var exists = await GetCache<T>(key, id);
-            if(!exists.Equals(default(KeyValuePair<int, T>)))
-            {
-                await RemoveData<T>(key,id);
-            }
-
-            var res = await SetData(key, id, data, DateTimeOffset.Now.AddMinutes(5));
-            return res.Value;
-        }
-
         public async Task<Result<bool>> Remove<T>(string key, int id, Func<Task<Result<bool>>> func)
         {
             var data = await func();
-            if(data.ResultCode != 200)
+            if (data.ResultCode != 200)
             {
                 return data;
             }
@@ -209,19 +198,21 @@ namespace DataAccess.Cache
                 {
                     return await dataBase.KeyDeleteAsync(key);
                 }
+
+                await dataBase.StringSetAndGetAsync(key, JsonConvert.SerializeObject(dict), new TimeSpan(5,0,0));
             }
 
             return true;
         }
 
-        private async Task<KeyValuePair<int, T>> SetData<T>(string key, int id, T value, DateTimeOffset validity)
+        private async Task<KeyValuePair<int, T>> SetData<T>(string key, int id, T value)
         {
             var obj = await dataBase.StringGetAsync(key);
             if (!obj.HasValue)
             {
                 var dict = new Dictionary<int, T>();
                 dict.Add(id, value);
-                obj = await dataBase.StringSetAndGetAsync(key, JsonConvert.SerializeObject(dict), validity - DateTimeOffset.Now);
+                obj = await dataBase.StringSetAndGetAsync(key, JsonConvert.SerializeObject(dict), new TimeSpan(5, 0, 0));
             }
             else
             {
@@ -235,7 +226,7 @@ namespace DataAccess.Cache
                     dict.Add(id, value);
                 }
 
-                obj = await dataBase.StringSetAndGetAsync(key, JsonConvert.SerializeObject(dict), validity - DateTimeOffset.Now);
+                obj = await dataBase.StringSetAndGetAsync(key, JsonConvert.SerializeObject(dict), new TimeSpan(5, 0, 0));
             }
 
             return new KeyValuePair<int, T>(id, value);
